@@ -8,6 +8,7 @@ import Product from "./pages/Product/Product";
 import Footer from "./components/Layout/Footer/Footer";
 import SubscriptionComponent from "./components/SubscriptionComponent/SubscriptionComponent";
 import LoginPage from "./pages/Login/Login";
+import RegisterForm from "./pages/Register/Register";
 
 function App() {
   return (
@@ -51,6 +52,8 @@ function App() {
             <Route path="/information" element={<Information />} />
             <Route path="/product" element={<Product />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterForm />} />
+
           </Routes>
         </main>
 
