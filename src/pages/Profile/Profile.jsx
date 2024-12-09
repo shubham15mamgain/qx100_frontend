@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 
+import ProfileCard from "../../components/ProfileCard/ProfileCard";
+
 const ProfilePage = () => {
   const user = {
     name: "John Doe",
@@ -19,7 +21,7 @@ const ProfilePage = () => {
       console.log("res", res.data);
     } catch (error) {}
   };
-  const profile = async () => {
+  const fetchProfile = async () => {
     try {
       const res = await axios.get("http://localhost:8000/v1/auth/profile", {
         withCredentials: true, // Ensures cookies are sent with the request
@@ -31,11 +33,24 @@ const ProfilePage = () => {
     }}
   
     useEffect(()=>{
-      profile()
+      fetchProfile()
     },[])
   
+  const userProfile = {
+    name: "Shubham M",
+    uniqueId: "9012345678",
+    totalRecharge: 5000,
+    totalWithdraw: 3000,
+    rechargeBalance: 2000,
+    todayIncome: 250,
+    totalIncome: 15000,
+    teamCount: 5,
+    teamIncome: 8000,
+    yourIncome: 1000,
+    bonusIncome: 200,
+  };
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
+    <div className="min-h-screen bg-gray-50 flex flex-col gap-6 justify-center items-center p-6">
       <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Header Section */}
         <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 text-white text-center">
@@ -85,6 +100,8 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      <ProfileCard {...userProfile}/>
     </div>
   );
 };
