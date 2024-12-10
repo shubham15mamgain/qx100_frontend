@@ -1,15 +1,16 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import ProfileCard from "../../components/ProfileCard/ProfileCard";
 
 const ProfilePage = () => {
+  const [profile,setProfile]=useState()
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
     phone: "+123-456-7890",
     address: "123 Main Street, City, Country",
-    profilePicture: "https://via.placeholder.com/150", // Replace with actual profile picture URL
+    profilePicture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSEriWalt3rgigUMC63Bhg4viP_gHy3dHBidlLGVY2ds5rcQO90qjHgXs&s", // Replace with actual profile picture URL
     bio: "Passionate software developer with expertise in modern web technologies. Always eager to learn and create impactful solutions.",
   };
 
@@ -19,22 +20,26 @@ const ProfilePage = () => {
         withCredentials: true, 
       });
       console.log("res", res.data);
+
     } catch (error) {}
   };
   const fetchProfile = async () => {
+
     try {
       const res = await axios.get("http://localhost:8000/v1/auth/profile", {
-        withCredentials: true, // Ensures cookies are sent with the request
+        withCredentials: true, // Include cookies in the request
       });
-      console.log("Profile response:", res.data); // Log the response data
+      console.log("Profile response:", res.data);
+      setProfile(res.data.user)
     } catch (error) {
-      // Ensure to check for response data in the error (if available)
       console.error("Error fetching profile:", error.response?.data || error.message);
-    }}
+    }
+  };
   
-    useEffect(()=>{
-      fetchProfile()
-    },[])
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+  
   
   const userProfile = {
     name: "Shubham M",
@@ -53,14 +58,16 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col gap-6 justify-center items-center p-6">
       <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Header Section */}
+
         <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 text-white text-center">
           <img
             src={user.profilePicture}
             alt="Profile"
             className="w-32 h-32 rounded-full mx-auto border-4 border-white shadow-md"
           />
-          <h1 className="mt-4 text-2xl font-bold">{user.name}</h1>
-          <p className="text-sm text-gray-200 mt-2">{user.bio}</p>
+       
+          <h1 className="mt-4 text-2xl font-bold">{profile?.name}</h1>
+          <p className="text-sm text-gray-200 mt-2">{profile?.email}</p>
         </div>
 
         {/* User Details */}
