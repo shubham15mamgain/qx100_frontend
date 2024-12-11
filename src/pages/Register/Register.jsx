@@ -1,27 +1,40 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios"; // Import Axios
+import { Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../../features/Auth/AuthAction";
 
 const RegisterForm = () => {
+  const { loading, error, success } = useSelector((state) => state.auth);
+  console.log("hkjhnkljlk",loading,error,success)
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  const dispatch=useDispatch()
   const onSubmit = async (data) => {
-    try {
-      // Sending the form data to the API
-      const response = await axios.post("http://localhost:8000/v1/auth/register", data);
+    // try {
+    //   // Sending the form data to the API
+    //   const response = await axios.post("http://localhost:8000/v1/auth/register", data);
       
-      // If registration is successful, you can handle the response here
-      console.log("Registration Successful:", response.data);
-      alert("Registration Successful!");
-    } catch (error) {
-      // Handle errors, e.g., show an error message
-      console.error("Registration failed:", error);
-      alert("Registration failed. Please try again.");
-    }
+    //   // If registration is successful, you can handle the response here
+    //   console.log("Registration Successful:", response.data);
+    //   alert("Registration Successful!");
+    //   Navigate("/login")
+    // } catch (error) {
+    //   // Handle errors, e.g., show an error message
+    //   console.error("Registration failed:", error);
+    //   alert("Registration failed. Please try again.");
+
+      // }
+      
+      dispatch(registerUser(data))
+
+
+      
   };
 
   return (

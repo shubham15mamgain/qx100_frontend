@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios"; // Import Axios
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userLogin } from "../../features/Auth/AuthAction";
 
 const LoginPage = () => {
   const {
@@ -9,32 +11,32 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
-  useEffect(() => {
-    if (localStorage.getItem("ismtnusrlgd")) localStorage.clear();
-  }, []);
+ const dispatch= useDispatch()
   const onSubmit = async (data) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/v1/auth/login",
-        data,{
-          withCredentials: true, // Ensures cookies are sent and received
-        }
-      );
+    //     try {
+    //       const response = await axios.post(
+    //         "http://localhost:8000/v1/auth/login",
+    //         data,{
+    //           withCredentials: true, // Ensures cookies are sent and received
+    //         }
+    //       );
 
-      console.log("Login Successful:", response.data);
+    //       console.log("Login Successful:", response.data);
 
+    // navigate("/profile")
 
+    //       alert("Login Successful");
+    //     } catch (error) {
+    //       // Handle login error
+    //       setErrorMessage(
+    //         error.response?.data?.message || "An error occurred. Please try again."
+    //       );
+    //     }
 
-      alert("Login Successful");
-    } catch (error) {
-      // Handle login error
-      setErrorMessage(
-        error.response?.data?.message || "An error occurred. Please try again."
-      );
-    }
-    localStorage.setItem("ismtnusrlgd", true);
+  dispatch(  userLogin (data))
+  navigate("/profile")
   };
 
   return (

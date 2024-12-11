@@ -2,9 +2,14 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 import ProfileCard from "../../components/ProfileCard/ProfileCard";
-
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserProfile, userLogout } from "../../features/Auth/AuthAction";
 const ProfilePage = () => {
   const [profile,setProfile]=useState()
+  const navigate = useNavigate()
+  const users=useSelector((state)=>state.auth)
+ 
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
@@ -14,31 +19,49 @@ const ProfilePage = () => {
     bio: "Passionate software developer with expertise in modern web technologies. Always eager to learn and create impactful solutions.",
   };
 
+  const dispatch=useDispatch()
+  useEffect(() => {
+
+      setProfile(users.userInfo.user); // Set profile from Redux user data
+
+  }, []);
   const logout = async () => {
-    try {
-      const res = await axios.post("http://localhost:8000/v1/auth/logout", {
-        withCredentials: true, 
-      });
-      console.log("res", res.data);
-
-    } catch (error) {}
-  };
-  const fetchProfile = async () => {
-
-    try {
-      const res = await axios.get("http://localhost:8000/v1/auth/profile", {
-        withCredentials: true, // Include cookies in the request
-      });
-      console.log("Profile response:", res.data);
-      setProfile(res.data.user)
-    } catch (error) {
-      console.error("Error fetching profile:", error.response?.data || error.message);
-    }
+    // try {
+    //   const res = await axios.post(
+    //     "http://localhost:8000/v1/auth/logout",
+    //     {}, // Empty body
+    //     { withCredentials: true } // Send cookies with the request
+    //   );
+    //   console.log("Logout response:", res.data);
+    //   navigate("/")
+      
+    // } catch (error) {
+    //   console.error("Logout error:", error.response?.data || error.message);
+    // }
+    dispatch(userLogout())
   };
   
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  // const fetchProfile = async () => {
+
+  //   try {
+  //     const res = await axios.get("http://localhost:8000/v1/auth/profile", {
+  //       withCredentials: true, // Include cookies in the request
+  //     });
+  //     console.log("Profile response:", res.data);
+  //     setProfile(res.data.user)
+  //   } catch (error) {
+  //     console.error("Error fetching profile:", error.response?.data || error.message);
+  //   }
+  // };
+  
+  // useEffect(() => {
+  //   fetchProfile();
+  // }, []);
+
+  useEffect(()=>{
+dispatch(getUserProfile())
+  },[])
+  
   
   
   const userProfile = {
@@ -68,6 +91,7 @@ const ProfilePage = () => {
        
           <h1 className="mt-4 text-2xl font-bold">{profile?.name}</h1>
           <p className="text-sm text-gray-200 mt-2">{profile?.email}</p>
+         { profile?.id}
         </div>
 
         {/* User Details */}
