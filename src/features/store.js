@@ -1,4 +1,5 @@
 import authReducer from "./Auth/AuthSlice";
+import productReducer from './product/productSlice'
 import { combineReducers } from "@reduxjs/toolkit";
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
@@ -13,6 +14,7 @@ const persistConfig = {
 // Combine reducers
 const combinedReducer = combineReducers({
   auth: authReducer,
+  product:productReducer
 });
 
 // Apply persistReducer to the combined reducer

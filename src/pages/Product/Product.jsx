@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios"; // To make API calls
 
 const Product = () => {
   const [products, setProducts] = useState([
@@ -11,48 +12,56 @@ const Product = () => {
       daily: 5000,
       term: 20,
     },
-    {
-      id: 2,
-      imageUrl: "https://fps.cdnpk.net/images/home/subhome-ai.webp?w=649&h=649",
-      name: "Arrive Within 6 Hours",
-      price: 25000,
-      daily: 2500,
-      term: 20,
-    },
-    {
-      id: 3,
-      imageUrl: "https://pixlr.com/images/index/ai-image-generator-one.webp",
-      name: "Arrive Within 12 Hours",
-      price: 12000,
-      daily: 1200,
-      term: 20,
-    },
-    {
-      id: 4,
-      imageUrl:
-        "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg",
-      name: "Arrive Within 24 Hours",
-      price: 6000,
-      daily: 600,
-      term: 20,
-    },
-    {
-      id: 5,
-      imageUrl:
-        "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
-      name: "Arrive Within 36 Hours",
-      price: 4000,
-      daily: 400,
-      term: 20,
-    },
+    // Additional products...
   ]);
 
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const handlePay = (product) => {
+  const handlePay = async (product) => {
     setSelectedProduct(product);
-    alert(`You selected ${product.name}. Proceed to pay $${product.price}.`);
+  
+    try {
+      // Create an order on the backend
+      const { data } = await axios.post("http://localhost:8000/recharge/create", {
+        amount: product.price,
+        id: product.id,
+      });
+  
+      console.log("Backend Response:", data);
+  
+      if (!data?.orderId) {
+        throw new Error("Order ID is missing in the response.");
+      }
+  
+      // Open Razorpay Checkout
+      const options = {
+        key: "YOUR_KEY_ID", // Replace with Razorpay key_id
+        amount: product.price * 100,
+        currency: "INR",
+        name: "Your Company",
+        description: product.name,
+        order_id: data.orderId, // Use the orderId from the response
+        handler: function (response) {
+          alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+        },
+        prefill: {
+          name: "Customer Name",
+          email: "customer@example.com",
+          contact: "1234567890",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+  
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error("Payment failed:", error);
+      alert("Failed to initiate payment. Please try again.");
+    }
   };
+  
   return (
     <div className="px-6 bg-gray-100 w-[70%]">
       <div className="grid grid-cols-1">
@@ -63,7 +72,6 @@ const Product = () => {
           >
             <div className="flex flex-row gap-8 mt-4 mb-4">
               <img src={product.imageUrl} className="w-32 min-h-min" />
-
               <div className="w-full">
                 <h2 className="text-xl text-blue-700 font-semibold mb-2">
                   {product.name}
