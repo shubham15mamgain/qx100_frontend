@@ -6,7 +6,7 @@ const Product = () => {
   const navigate = useNavigate();
   const [products] = useState([
     {
-      _id: "1", // Ensure this matches the backend's RechargePlanId
+      _id: "1", 
       imageUrl:
         "https://img.freepik.com/free-photo/colorful-design-with-spiral-design_188544-9588.jpg",
       name: "Arrive Within 3 Hours",
@@ -14,7 +14,7 @@ const Product = () => {
       daily: 5000,
       term: 20,
     },
-    // Add additional products here...
+   
   ]);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -22,49 +22,43 @@ const Product = () => {
     setSelectedProduct(product);
 
     try {
-      // Step 1: Create an order on the backend
-      const { data } = await axios.post(
-        "http://localhost:8000/recharge/create",
-        {
-         price: product.price // Use correct key as per backend API
-        }
-      );
+  
+      const { data } = await axios.post("http://localhost:8000/recharge/create", {
+        price: product.price, 
+      });
 
    
-      // Step 2: Prepare Razorpay options
       const options = {
-        key: import.meta.env.
-        VITE_APP_RAZORPAY_KEY_ID, // Use environment variable for Razorpay key
-        amount: product.price * 100, // Convert to paise
+        key: import.meta.env.VITE_APP_RAZORPAY_KEY_ID, 
+        amount: product.price * 100, 
         currency: "INR",
-        name: "Your Company Name", // Replace with your company name
+        name: "Your Company Name", 
         description: product.name,
-        image: "/path/to/your/logo.png", // Path to your company logo
-        order_id: data.orderId, // Razorpay order ID from the backend
+        image: "/path/to/your/logo.png", 
+        order_id: data.order.id,
         handler: async (response) => {
           try {
-            // Step 3: Verify the payment on the backend
+           
             const verificationPayload = {
-              ...response,
-              RechargePlanId: product.id,
+              razorpayOrderId: data.order.id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              RechargePlanId: product._id,
             };
 
-            await axios.post(
-              `http://localhost:8000/recharge/verify/${data.rechargePlanId}`,
-              verificationPayload
-            );
+            await axios.post("http://localhost:8000/recharge/verify", verificationPayload);
 
             alert("Payment verified successfully!");
-            navigate("/success"); // Navigate to a success page
+            navigate("/");
           } catch (error) {
             console.error("Payment verification failed:", error);
             alert("Payment verification failed. Please contact support.");
           }
         },
         prefill: {
-          name: "Anjali", // Optionally prefill customer name
-          email: "anjalibartwal@gmail.com", // Optionally prefill customer email
-          contact: "7906550720", // Optionally prefill customer contact
+          name: "Anjali", 
+          email: "anjalibartwal@gmail.com", 
+          contact: "7906550720", 
         },
         modal: {
           ondismiss: () => {
@@ -72,11 +66,11 @@ const Product = () => {
           },
         },
         theme: {
-          color: "#121212", // Customize the theme color
+          color: "#121212", 
         },
       };
 
-      // Step 4: Open Razorpay payment window
+  
       const razorpayInstance = new window.Razorpay(options);
       razorpayInstance.open();
     } catch (error) {
@@ -90,7 +84,7 @@ const Product = () => {
       <div className="grid grid-cols-1">
         {products.map((product) => (
           <div
-            key={product.id}
+            key={product._id}
             className="bg-blue-200 rounded-lg shadow-md p-4 border border-gray-200 mt-2"
           >
             <div className="flex flex-row gap-8 mt-4 mb-4">
