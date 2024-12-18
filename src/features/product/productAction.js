@@ -38,13 +38,22 @@ export const fetchProducts = createAsyncThunk(
   "/product",
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axiosInstance.get("/products");
+      const { data } = await axiosInstance.get("/product");
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
+
+export  const getProductsById= createAsyncThunk("/product/:id" ,  async(id,{rejectWithValue})=>{
+  try{
+    const {data}= await axiosInstance.get(`/product/${id}`)
+    return data 
+  }catch(error){
+return  rejectWithValue(error.res?.data?.message || error.message)
+  }
+})
 
 export const updateProduct = createAsyncThunk(
   "/product/update",

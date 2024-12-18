@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts, getProductsById } from "../../features/product/productAction";
 
 const Product = () => {
+  const dispatch=useDispatch();
   const navigate = useNavigate();
-  const [products] = useState([
+  const{products}=useSelector((state)=>state.product)
+  const { productDetails } = useSelector((state) => state.product)
+  console.log(products.data)
+  const [product] = useState([
     {
       _id: "1", 
       imageUrl:
@@ -26,6 +32,7 @@ const Product = () => {
       const { data } = await axios.post("http://localhost:8000/recharge/create", {
         price: product.price, 
       });
+
 
    
       const options = {
@@ -79,13 +86,34 @@ const Product = () => {
     }
   };
 
+
+useEffect(()=>{
+  dispatch(fetchProducts())
+},[])
+
+
+useEffect(() => {
+  if (products.length > 0) {
+    products.forEach((product) => {
+  
+      if (!productDetails[product._id]) {
+        dispatch(getProductsById(product._id)); 
+      }
+    });
+  }
+}, [products, productDetails, dispatch]);
+
+
+
+
   return (
     <div className="px-6 bg-gray-100 w-[70%]">
       <div className="grid grid-cols-1">
-        {products.map((product) => (
+        {product.map((product) => (
           <div
             key={product._id}
             className="bg-blue-200 rounded-lg shadow-md p-4 border border-gray-200 mt-2"
+
           >
             <div className="flex flex-row gap-8 mt-4 mb-4">
               <img
@@ -129,6 +157,14 @@ const Product = () => {
           </p>
         </div>
       )}
+
+      <div>{products?.data?.map((item)=>(
+        <div className="flex flex-row gap-28   ">
+       <div className=" bg-blue-200 mb-10" key={item}> {item?.name}</div>
+       <div>{item?.daily}</div>
+        <div>{item?.term}</div>    
+        <div>{item?.price}</div>
+       </div>))}</div>
     </div>
   );
 };

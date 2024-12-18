@@ -4,6 +4,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductsById,
 } from "./productAction.js";
 
 const initialState = {
@@ -11,6 +12,7 @@ const initialState = {
   loading: false,
   error: null,
   success: false,
+  productDetails: {},
 };
 
 const productSlice = createSlice({
@@ -29,6 +31,20 @@ const productSlice = createSlice({
         state.products = action.payload;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Get Product By ID
+      .addCase(getProductsById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getProductsById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productDetails[product._id] = product;
+      })
+      .addCase(getProductsById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
