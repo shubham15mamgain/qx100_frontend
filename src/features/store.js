@@ -1,9 +1,9 @@
 import authReducer from "./Auth/AuthSlice";
-import productReducer from './product/productSlice'
+import productReducer from "./product/productSlice";
 import { combineReducers } from "@reduxjs/toolkit";
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // or use any other storage engine
+import storage from "redux-persist/lib/storage";
 
 // Persist configuration
 const persistConfig = {
@@ -14,13 +14,11 @@ const persistConfig = {
 // Combine reducers
 const combinedReducer = combineReducers({
   auth: authReducer,
-  product:productReducer
+  product: productReducer,
 });
 
-// Apply persistReducer to the combined reducer
 const persistedReducer = persistReducer(persistConfig, combinedReducer);
 
-// Configure store with middleware that ignores non-serializable actions from Redux Persist
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>

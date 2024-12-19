@@ -1,44 +1,42 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../../features/product/productAction";
+import axiosInstance from "../../axiosInstance";
 
 const Product = () => {
+  const dispatch = useDispatch();
+
+  const { products } = useSelector((state) => state.product);
   const navigate = useNavigate();
-  const [products] = useState([
-    {
-      _id: "1", 
-      imageUrl:
-        "https://img.freepik.com/free-photo/colorful-design-with-spiral-design_188544-9588.jpg",
-      name: "Arrive Within 3 Hours",
-      price: 50000,
-      daily: 5000,
-      term: 20,
-    },
-   
-  ]);
+
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  console.log(products, "my products");
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, []);
 
   const handlePay = async (product) => {
     setSelectedProduct(product);
 
     try {
-  
-      const { data } = await axios.post("http://localhost:8000/recharge/create", {
-        price: product.price, 
+      const { data } = await axiosInstance.post("/recharge/create", {
+        price: product.price,
       });
 
-   
       const options = {
-        key: import.meta.env.VITE_APP_RAZORPAY_KEY_ID, 
-        amount: product.price * 100, 
+        key: import.meta.env.VITE_APP_RAZORPAY_KEY_ID,
+        amount: product.price * 100,
         currency: "INR",
-        name: "Your Company Name", 
+        name: "Your Company Name",
         description: product.name,
-        image: "/path/to/your/logo.png", 
+        image: "/path/to/your/logo.png",
         order_id: data.order.id,
         handler: async (response) => {
           try {
-           
             const verificationPayload = {
               razorpayOrderId: data.order.id,
               razorpayPaymentId: response.razorpay_payment_id,
@@ -46,7 +44,7 @@ const Product = () => {
               RechargePlanId: product._id,
             };
 
-            await axios.post("http://localhost:8000/recharge/verify", verificationPayload);
+            await axiosInstance.post("/recharge/verify", verificationPayload);
 
             alert("Payment verified successfully!");
             navigate("/");
@@ -56,9 +54,9 @@ const Product = () => {
           }
         },
         prefill: {
-          name: "Anjali", 
-          email: "anjalibartwal@gmail.com", 
-          contact: "7906550720", 
+          name: "Anjali",
+          email: "anjalibartwal@gmail.com",
+          contact: "7906550720",
         },
         modal: {
           ondismiss: () => {
@@ -66,11 +64,10 @@ const Product = () => {
           },
         },
         theme: {
-          color: "#121212", 
+          color: "#121212",
         },
       };
 
-  
       const razorpayInstance = new window.Razorpay(options);
       razorpayInstance.open();
     } catch (error) {
@@ -80,16 +77,16 @@ const Product = () => {
   };
 
   return (
-    <div className="px-6 bg-gray-100 w-[70%]">
-      <div className="grid grid-cols-1">
-        {products.map((product) => (
+    <div className="px-6 bg-gray-100 w-[70%] mb-20">
+      <div className="grid grid-cols-1 gap-6 mb-10">
+        {products?.data?.map((product) => (
           <div
             key={product._id}
             className="bg-blue-200 rounded-lg shadow-md p-4 border border-gray-200 mt-2"
           >
             <div className="flex flex-row gap-8 mt-4 mb-4">
               <img
-                src={product.imageUrl}
+                src={product.image.secure_url}
                 alt={product.name}
                 className="w-32 min-h-min"
               />
