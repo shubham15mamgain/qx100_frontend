@@ -6,64 +6,36 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserProfile, userLogout } from "../../features/Auth/AuthAction";
 const ProfilePage = () => {
-  const [profile,setProfile]=useState()
-  const navigate = useNavigate()
-  const users=useSelector((state)=>state.auth)
- 
+  const [profile, setProfile] = useState();
+  const navigate = useNavigate();
+  const users = useSelector((state) => state.auth);
+
+  const isLoggedIn = localStorage.getItem("qx_login");
+
+  console.log(isLoggedIn, "mu log in");
+
   const user = {
     name: "John Doe",
     email: "johndoe@example.com",
     phone: "+123-456-7890",
     address: "123 Main Street, City, Country",
-    profilePicture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSEriWalt3rgigUMC63Bhg4viP_gHy3dHBidlLGVY2ds5rcQO90qjHgXs&s", // Replace with actual profile picture URL
+    profilePicture:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSEriWalt3rgigUMC63Bhg4viP_gHy3dHBidlLGVY2ds5rcQO90qjHgXs&s", // Replace with actual profile picture URL
     bio: "Passionate software developer with expertise in modern web technologies. Always eager to learn and create impactful solutions.",
   };
 
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
-
-      setProfile(users.userInfo.user); // Set profile from Redux user data
-
+    setProfile(users?.userInfo?.user); // Set profile from Redux user data
   }, []);
   const logout = async () => {
-    // try {
-    //   const res = await axios.post(
-    //     "http://localhost:8000/v1/auth/logout",
-    //     {}, // Empty body
-    //     { withCredentials: true } // Send cookies with the request
-    //   );
-    //   console.log("Logout response:", res.data);
-    //   navigate("/")
-      
-    // } catch (error) {
-    //   console.error("Logout error:", error.response?.data || error.message);
-    // }
-    dispatch(userLogout())
+    dispatch(userLogout());
   };
-  
-  // const fetchProfile = async () => {
 
-  //   try {
-  //     const res = await axios.get("http://localhost:8000/v1/auth/profile", {
-  //       withCredentials: true, // Include cookies in the request
-  //     });
-  //     console.log("Profile response:", res.data);
-  //     setProfile(res.data.user)
-  //   } catch (error) {
-  //     console.error("Error fetching profile:", error.response?.data || error.message);
-  //   }
-  // };
-  
-  // useEffect(() => {
-  //   fetchProfile();
-  // }, []);
+  useEffect(() => {
+    dispatch(getUserProfile());
+  }, []);
 
-  useEffect(()=>{
-dispatch(getUserProfile())
-  },[])
-  
-  
-  
   const userProfile = {
     name: "Shubham M",
     uniqueId: "9012345678",
@@ -79,60 +51,68 @@ dispatch(getUserProfile())
   };
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col gap-6 justify-center items-center p-6">
-      <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Header Section */}
+      {isLoggedIn ? (
+        <div className="">
+          <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
+            {/* Header Section */}
 
-        <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 text-white text-center">
-          <img
-            src={user.profilePicture}
-            alt="Profile"
-            className="w-32 h-32 rounded-full mx-auto border-4 border-white shadow-md"
-          />
-       
-          <h1 className="mt-4 text-2xl font-bold">{profile?.name}</h1>
-          <p className="text-sm text-gray-200 mt-2">{profile?.email}</p>
-         { profile?.id}
-        </div>
+            <div className="relative bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 text-white text-center">
+              <img
+                src={user.profilePicture}
+                alt="Profile"
+                className="w-32 h-32 rounded-full mx-auto border-4 border-white shadow-md"
+              />
 
-        {/* User Details */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h2 className="text-gray-700 text-sm font-semibold uppercase">
-                Email
-              </h2>
-              <p className="text-gray-900">{user.email}</p>
+              <h1 className="mt-4 text-2xl font-bold">{profile?.name}</h1>
+              <p className="text-sm text-gray-200 mt-2">{profile?.email}</p>
+              {profile?.id}
             </div>
-            <div>
-              <h2 className="text-gray-700 text-sm font-semibold uppercase">
-                Phone
-              </h2>
-              <p className="text-gray-900">{user.phone}</p>
-            </div>
-            <div className="col-span-1 md:col-span-2">
-              <h2 className="text-gray-700 text-sm font-semibold uppercase">
-                Address
-              </h2>
-              <p className="text-gray-900">{user.address}</p>
+
+            {/* User Details */}
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h2 className="text-gray-700 text-sm font-semibold uppercase">
+                    Email
+                  </h2>
+                  <p className="text-gray-900">{user.email}</p>
+                </div>
+                <div>
+                  <h2 className="text-gray-700 text-sm font-semibold uppercase">
+                    Phone
+                  </h2>
+                  <p className="text-gray-900">{user.phone}</p>
+                </div>
+                <div className="col-span-1 md:col-span-2">
+                  <h2 className="text-gray-700 text-sm font-semibold uppercase">
+                    Address
+                  </h2>
+                  <p className="text-gray-900">{user.address}</p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-6 flex justify-center space-x-4">
+                <button className="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg shadow-md hover:bg-indigo-600">
+                  Edit Profile
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md hover:bg-red-600"
+                  onClick={logout}
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="mt-6 flex justify-center space-x-4">
-            <button className="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg shadow-md hover:bg-indigo-600">
-              Edit Profile
-            </button>
-            <button
-              className="px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md hover:bg-red-600"
-              onClick={logout}
-            >
-              Logout
-            </button>
-          </div>
+          <ProfileCard {...userProfile} />
         </div>
-      </div>
-
-      <ProfileCard {...userProfile}/>
+      ) : (
+        <div>
+          <h1> Please Login to View Profile </h1>
+        </div>
+      )}
     </div>
   );
 };

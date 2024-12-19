@@ -33,7 +33,6 @@ export const createProduct = createAsyncThunk(
   }
 );
 
-
 export const fetchProducts = createAsyncThunk(
   "/product",
   async (_, { rejectWithValue }) => {
