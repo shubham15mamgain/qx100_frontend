@@ -84,7 +84,28 @@ const RegisterForm = () => {
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
-
+{/* referral */}
+<div className="mb-4">
+          <label htmlFor="referalCode" className="block text-sm font-medium text-gray-700">
+            referalCode
+          </label>
+          <input
+            type="referalCode"
+            id="referalCode"
+            {...register("referalCode", {
+              // required: "referalCode is required",
+              minLength: {
+                value: 6,
+                message: "referalCode must be at least 6 characters",
+              },
+            })}
+            className={`mt-1 block w-full px-4 py-2 border ${errors.referalCode ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500`}
+            placeholder="Enter your referalCode"
+          />
+          {errors.referalCode && (
+            <p className="text-red-500 text-xs mt-1">{errors.referalCode.message}</p>
+          )}
+        </div>
         {/* Password Field */}
         <div className="mb-4">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">

@@ -27,7 +27,7 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     setProfile(users?.userInfo?.user); // Set profile from Redux user data
-  }, []);
+  }, [profile]);
   const logout = async () => {
     dispatch(userLogout());
   };
@@ -65,12 +65,14 @@ const ProfilePage = () => {
 
               <h1 className="mt-4 text-2xl font-bold">{profile?.name}</h1>
               <p className="text-sm text-gray-200 mt-2">{profile?.email}</p>
-              {profile?.id}
+              <div>{profile?.id}</div>
+              <div>{profile?.referalId}</div>
             </div>
 
             {/* User Details */}
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>      <div>share you Referal code :   <div>{profile?.referalId}</div></div></div>
                 <div>
                   <h2 className="text-gray-700 text-sm font-semibold uppercase">
                     Email
@@ -92,7 +94,9 @@ const ProfilePage = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-6 flex justify-center space-x-4">
+              
+              <div className="mt-6 flex  justify-center space-x-4">
+          
                 <button className="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg shadow-md hover:bg-indigo-600">
                   Edit Profile
                 </button>
